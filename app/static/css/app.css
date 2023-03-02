@@ -18,3 +18,28 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+.files_uploaded{
+    max-width: 85%;
+    margin: 0 auto;
+    margin-top: 5%;
+}
+.grid-list{
+    display:grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-gap:5px;
+    grid-column-gap: 0px;
+    grid-row-gap: 60px;
+}
+
+.grid-image{
+    margin: 0px;
+    padding: 0px;
+}
+.grid-image img{
+    width: 270px;
+    height: 250px;
+    margin:0px;
+    padding:0px;
+    box-shadow:  0 3px 5px rgb(0 0 0 / 0.2);
+}

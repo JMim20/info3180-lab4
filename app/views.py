@@ -40,23 +40,23 @@ def upload():
             filename= secure_filename(image_upld.filename)
             image_upld.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('File Saved', 'success')
-            return redirect(url_for('home')) # Update this to redirect the user to a route that displays all uploaded image files
+            return redirect(url_for('files')) # Update this to redirect the user to a route that displays all uploaded image files
 
     return render_template('upload.html', form=form)
 
 def get_uploaded_images():
-    #uploads_dir = 'uploads'
-    #fileNames = []
-    #for ufilename in os.listdir(uploads_dir):
-     #   if ufilename.endswith('.jpg') or ufilename.endswith('.png'):
-      #      fileNames.append(ufilename)
-    #return fileNames
-
+    # uploads_dir = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'])
+    # fileNames = []
+    # for filename in os.listdir(uploads_dir):
+    #    if filename.endswith('.jpg') or filename.endswith('.png'):
+    #        fileNames.append(filename)
+    # return fileNames
+    uploads_dir = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'])
     filenames = []
-    for file in os.listdir(upload_folder):
-        if os.path.isfile(os.path.join(upload_folder, file)):
-            filenames.append(file)
-    return filenames
+    for filename in os.listdir(uploads_dir):
+        if os.path.isfile(os.path.join(uploads_dir, filename)):
+            filenames.append(filename)
+    return filenames 
 
 @app.route('/uploads/<filename>')
 def get_image(filename):
@@ -66,11 +66,9 @@ def get_image(filename):
 @app.route('/files')
 @login_required 
 def files():
-    uploads_dir = os.path.join(app.static_folder, 'uploads')
-    files = os.listdir(uploads_dir)
-    # Filter out non-image files
-    #images = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png')]
-    return render_template('files.html', images=images)
+    fileNames = get_uploaded_images ()
+    image_files = [url_for('get_image', filename=filename) for filename in fileNames if filename.endswith(('.jpg', '.JPG', '.png', '.PNG'))]
+    return render_template('files.html', image_files=image_files)
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -84,9 +82,10 @@ def login():
         user = db.session.execute(db.select(UserProfile).filter_by(username=username)).scalar()
     
         if user is not None and check_password_hash(user.password, password):
+            # remember_me = False
 
-            #if 'remember_me' in request.form:
-                #remember_me = True
+            # if 'remember_me' in request.form:
+            #     remember_me = True
 
             login_user(user)
             flash('Logged in successfully!', 'success')

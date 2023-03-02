@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h1 class="page-title">
+    Uploaded Files
+    </h1>
+    <div class="files_uploaded">
+        <ul class="grid-list">
+        {% for image_file in image_files %}
+            <div class="grid-image"><img src="{{ image_file }}" /></div>
+        {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
