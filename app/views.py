@@ -44,6 +44,34 @@ def upload():
 
     return render_template('upload.html', form=form)
 
+def get_uploaded_images():
+    #uploads_dir = 'uploads'
+    #fileNames = []
+    #for ufilename in os.listdir(uploads_dir):
+     #   if ufilename.endswith('.jpg') or ufilename.endswith('.png'):
+      #      fileNames.append(ufilename)
+    #return fileNames
+
+    filenames = []
+    for file in os.listdir(upload_folder):
+        if os.path.isfile(os.path.join(upload_folder, file)):
+            filenames.append(file)
+    return filenames
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+@app.route('/files')
+@login_required 
+def files():
+    uploads_dir = os.path.join(app.static_folder, 'uploads')
+    files = os.listdir(uploads_dir)
+    # Filter out non-image files
+    #images = [f for f in files if f.endswith('.jpg') or f.endswith('.jpeg') or f.endswith('.png')]
+    return render_template('files.html', images=images)
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -65,8 +93,16 @@ def login():
             return redirect(url_for("upload")) 
         else:
             flash('Username or Password is incorrect!', 'failure')
-         
+    flash_errors(form)    
     return render_template("login.html", form=form)
+
+@app.route("/logout")
+@login_required
+def logout():
+
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('home'))
 
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
